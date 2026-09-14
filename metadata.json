@@ -1,0 +1,8 @@
+{
+  "name": "UMT Prompt Studio",
+  "description": "ระบบ Prompt AI พร้อมระบบตรวจสอบและสร้างภาพตัวอย่าง Thumbnail ด้วย AI, คลังคำสั่งแปลง PDF to Word, Part Number Generator, และศูนย์รวมข้อควรระวังในการทำ BID",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

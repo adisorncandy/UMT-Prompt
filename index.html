@@ -15,6 +15,126 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Kanit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+      (function() {
+        const STORAGE_KEY = "umt_prompt_studio_items_v24";
+        const VERSION_KEY = "umt_prompt_studio_items_version";
+        const CURRENT_VER = "2026-09-14-v24";
+
+        try {
+          const serverPrompts = window.__SERVER_PROMPTS__;
+          const raw = localStorage.getItem(STORAGE_KEY);
+          
+          if (Array.isArray(serverPrompts) && serverPrompts.length > 0) {
+            if (!raw) {
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(serverPrompts));
+              localStorage.setItem(VERSION_KEY, CURRENT_VER);
+            } else {
+              const localItems = JSON.parse(raw);
+              if (Array.isArray(localItems)) {
+                const serverMap = new Map(serverPrompts.map(p => [p.id, p]));
+                const merged = localItems.map(item => {
+                  const sp = serverMap.get(item.id);
+                  if (sp) {
+                    const serverThumb = sp.thumbnailUrl && sp.thumbnailUrl.trim().length > 0 ? sp.thumbnailUrl : null;
+                    const localThumb = item.thumbnailUrl && item.thumbnailUrl.trim().length > 0 ? item.thumbnailUrl : null;
+                    // Prefer clean server asset thumbnail if local is missing or is bloated data:
+                    let bestThumb = localThumb;
+                    if (!localThumb || localThumb.startsWith("data:") || (serverThumb && !serverThumb.startsWith("data:"))) {
+                      bestThumb = serverThumb || localThumb;
+                    }
+                    return {
+                      ...item,
+                      thumbnailUrl: bestThumb || item.thumbnailUrl,
+                      aspectRatio: item.aspectRatio || sp.aspectRatio
+                    };
+                  }
+                  return item;
+                });
+                const localIds = new Set(localItems.map(p => p.id));
+                for (const sp of serverPrompts) {
+                  if (!localIds.has(sp.id)) merged.push(sp);
+                }
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+                localStorage.setItem(VERSION_KEY, CURRENT_VER);
+              }
+            }
+          }
+
+          // Verification and repair
+          const currentRaw = localStorage.getItem(STORAGE_KEY);
+          if (currentRaw) {
+            const items = JSON.parse(currentRaw);
+            if (Array.isArray(items) && items.length > 0) {
+              let updated = false;
+              for (const item of items) {
+                if (item.id === "1788779257202" && (!item.thumbnailUrl || !item.thumbnailUrl.trim())) {
+                  item.thumbnailUrl = "/assets/bidding-catalog-comply-thumb.svg";
+                  updated = true;
+                }
+                if (item.thumbnailUrl && item.thumbnailUrl.startsWith("./assets/")) {
+                  item.thumbnailUrl = item.thumbnailUrl.replace("./assets/", "/assets/");
+                  updated = true;
+                }
+                if (item.thumbnailUrl && item.thumbnailUrl.startsWith("data:") && item.thumbnailUrl.length > 60000) {
+                  const ext = item.thumbnailUrl.includes("image/webp") ? "webp" : (item.thumbnailUrl.includes("image/png") ? "png" : "jpg");
+                  item.thumbnailUrl = "/assets/thumbnails/" + item.id + "." + ext;
+                  updated = true;
+                }
+              }
+              if (updated) {
+                try {
+                  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+                  localStorage.setItem(VERSION_KEY, CURRENT_VER);
+                } catch(e) {
+                  console.warn("[UMT Storage] LocalStorage repair error:", e);
+                }
+              }
+            }
+          }
+        } catch(e) {
+          console.warn("[UMT Storage] Check error:", e);
+        }
+
+        // Intercept setItem to also sync prompts to server disk
+        const originalSetItem = localStorage.setItem.bind(localStorage);
+        let syncTimeout = null;
+        localStorage.setItem = function(key, val) {
+          try {
+            originalSetItem(key, val);
+          } catch(err) {
+            console.warn("[UMT Storage] Quota check on setItem:", key, err);
+            if (key === STORAGE_KEY && typeof val === "string") {
+              try {
+                const parsed = JSON.parse(val);
+                if (Array.isArray(parsed)) {
+                  for (const item of parsed) {
+                    if (item.thumbnailUrl && item.thumbnailUrl.startsWith("data:") && item.thumbnailUrl.length > 80000) {
+                      const ext = item.thumbnailUrl.includes("image/png") ? "png" : "jpg";
+                      item.thumbnailUrl = "/assets/thumbnails/" + item.id + "." + ext;
+                    }
+                  }
+                  originalSetItem(key, JSON.stringify(parsed));
+                }
+              } catch(subErr) {}
+            }
+          }
+
+          if (key === STORAGE_KEY && typeof val === "string") {
+            clearTimeout(syncTimeout);
+            syncTimeout = setTimeout(function() {
+              try {
+                fetch('/api/prompts', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ prompts: JSON.parse(val) })
+                }).catch(function() {});
+              } catch(e) {}
+            }, 800);
+          }
+        };
+      })();
+    </script>
     <script type="module" crossorigin src="./assets/index-CvWhJcZ5.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-BeU5obAZ.css">
   </head>
