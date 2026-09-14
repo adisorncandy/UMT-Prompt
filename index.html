@@ -92,6 +92,15 @@
               }
             }
           }
+
+          // Category order sync
+          const serverCatOrder = window.__SERVER_CATEGORY_ORDER__;
+          if (Array.isArray(serverCatOrder) && serverCatOrder.length > 0) {
+            const currentCatOrder = localStorage.getItem("umt_custom_category_order");
+            if (!currentCatOrder) {
+              localStorage.setItem("umt_custom_category_order", JSON.stringify(serverCatOrder));
+            }
+          }
         } catch(e) {
           console.warn("[UMT Storage] Check error:", e);
         }

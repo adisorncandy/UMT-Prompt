@@ -15,8 +15,47 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 const dataDir = path.join(__dirname, 'data');
 const promptsDbPath = path.join(dataDir, 'prompts-db.json');
+const categoryOrderPath = path.join(dataDir, 'category-order.json');
 const backupDbPath = path.join(__dirname, '_source-data', 'umt_prompts_db_1789373141761.json');
 const thumbsDir = path.join(__dirname, 'assets', 'thumbnails');
+
+const DEFAULT_CATEGORY_ORDER = [
+  "Bidding",
+  "Catalog",
+  "Translation",
+  "PDF to Word",
+  "Proposal",
+  "BOQ",
+  "CostSheet",
+  "Presentation",
+  "User Manual",
+  "VDO Presentation",
+  "AI Video",
+  "AI Image",
+  "Technical Spec",
+  "Training Material",
+  "All-in-One"
+];
+
+function getCategoryOrder() {
+  if (fs.existsSync(categoryOrderPath)) {
+    try {
+      const content = fs.readFileSync(categoryOrderPath, 'utf8');
+      const parsed = JSON.parse(content);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    } catch (e) {
+      console.warn('Error reading category-order.json:', e);
+    }
+  }
+  return DEFAULT_CATEGORY_ORDER;
+}
+
+function saveCategoryOrder(order) {
+  if (!Array.isArray(order) || order.length === 0) return DEFAULT_CATEGORY_ORDER;
+  fs.writeFileSync(categoryOrderPath, JSON.stringify(order, null, 2), 'utf8');
+  console.log(`[Server Storage] Saved category order (${order.length} items)`);
+  return order;
+}
 
 if (!fs.existsSync(dataDir)) {
   fs.mkdirSync(dataDir, { recursive: true });
@@ -110,6 +149,27 @@ app.post('/api/prompts', (req, res) => {
     res.json({ success: true, count: saved.length });
   } catch (err) {
     console.error('[Server Storage] Error saving prompts:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// API: Get category order
+app.get('/api/category-order', (req, res) => {
+  const order = getCategoryOrder();
+  res.json({ success: true, order });
+});
+
+// API: Save category order
+app.post('/api/category-order', (req, res) => {
+  try {
+    const { order } = req.body || {};
+    if (!Array.isArray(order) || order.length === 0) {
+      return res.status(400).json({ success: false, error: 'Expected non-empty array of category IDs' });
+    }
+    const saved = saveCategoryOrder(order);
+    res.json({ success: true, order: saved });
+  } catch (err) {
+    console.error('[Server Storage] Error saving category order:', err);
     res.status(500).json({ success: false, error: err.message });
   }
 });
@@ -256,8 +316,9 @@ const serveHtmlWithServerState = (req, res) => {
 
     let html = fs.readFileSync(indexPath, 'utf8');
     const prompts = getPromptsDatabase();
+    const categoryOrder = getCategoryOrder();
 
-    const stateScript = `<script id="umt-server-prompts-data">window.__SERVER_PROMPTS__ = ${JSON.stringify(prompts)};</script>`;
+    const stateScript = `<script id="umt-server-prompts-data">window.__SERVER_PROMPTS__ = ${JSON.stringify(prompts)};\nwindow.__SERVER_CATEGORY_ORDER__ = ${JSON.stringify(categoryOrder)};</script>`;
     if (html.includes('<script type="module"')) {
       html = html.replace('<script type="module"', `${stateScript}\n    <script type="module"`);
     } else {
