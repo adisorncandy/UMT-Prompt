@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 const dataDir = path.join(__dirname, 'data');
 const promptsDbPath = path.join(dataDir, 'prompts-db.json');
 const categoryOrderPath = path.join(dataDir, 'category-order.json');
-const backupDbPath = path.join(__dirname, '_source-data', 'umt_prompts_db_1789373141761.json');
+const backupDbPath = path.join(__dirname, '_source-data', 'prompts-backup-full.json');
 const thumbsDir = path.join(__dirname, 'assets', 'thumbnails');
 
 const DEFAULT_CATEGORY_ORDER = [
@@ -205,6 +205,31 @@ app.post('/api/category-order', (req, res) => {
   } catch (err) {
     console.error('[Server Storage] Error saving category order:', err);
     res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// API: Download all thumbnails as a ZIP bundle
+app.get('/api/download-thumbnails-zip', (req, res) => {
+  try {
+    const zipPath = path.join(__dirname, 'thumbnails_bundle.zip');
+    // Regenerate zip if requested or missing
+    if (!fs.existsSync(zipPath) || req.query.fresh === '1') {
+      try {
+        const { execSync } = require('child_process');
+        execSync(`python3 -c "import zipfile, os; zf = zipfile.ZipFile('thumbnails_bundle.zip', 'w', zipfile.ZIP_DEFLATED); [zf.write(os.path.join(r, f), os.path.join('thumbnails', f)) for r, d, files in os.walk('assets/thumbnails') for f in files]; zf.close()"`);
+      } catch (genErr) {
+        console.warn('[Server Storage] Error creating fresh zip:', genErr);
+      }
+    }
+    if (!fs.existsSync(zipPath)) {
+      return res.status(404).send('Thumbnails bundle is not available yet.');
+    }
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', 'attachment; filename="thumbnails_bundle.zip"');
+    res.sendFile(zipPath);
+  } catch (err) {
+    console.error('[Server Storage] Error serving thumbnails zip:', err);
+    res.status(500).send('Error downloading zip: ' + err.message);
   }
 });
 
