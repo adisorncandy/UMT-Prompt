@@ -29,14 +29,14 @@
     "id": "bidding-mark-catalog-fill-word-comply",
     "title": "ขีดเส้น Mark Catalog PDF และ เติมรายละเอียดลงในตาราง Comply (Word .docx)",
     "category": "Bidding",
-    "thumbnailUrl": "/assets/thumbnails/bidding-mark-catalog-fill-word-comply.png",
-    "aspectRatio": "16:9",
+    "thumbnailUrl": "/assets/thumbnails/bidding-mark-catalog-fill-word-comply.webp",
+    "aspectRatio": "4:3",
     "stylePreset": "Catalog Mark & Compliance Table",
     "inputType": "Catalog PDF (ใส่เลขหน้า) + ตาราง Comply (Word .docx)",
     "outputType": "Catalog PDF (ขีดเส้น Mark) + Word ตาราง Comply (กรอกบท/หน้า/รุ่น/รายละเอียด)",
     "description": "ขีดเส้น Mark Comply ใน Catalog PDF เฉพาะข้อความที่ยืนยัน TOR ได้จริง ห้ามเดา พร้อมเติมบท/หัวข้อ หน้า รุ่น/Model และรายละเอียดลงในตาราง Word คง Format เดิม 100% ข้อย่อยใช้รูปแบบ 1.1 (1) หรือ 1.1 (1) (12)",
     "promptContent": "# ขีดเส้น Mark Catalog PDF และ เติมรายละเอียดลงในตาราง Comply ใน Word\n\nคุณคือผู้เชี่ยวชาญด้านการจัดทำเอกสารข้อเสนอทางเทคนิค การตรวจเทียบคุณลักษณะเฉพาะ (TOR Compliance) และการทำ Mark Catalog ระดับมืออาชีพ\n\n---\n\n## 📌 เอกสารนำเข้า (INPUT):\n1. **Catalog PDF:** แค็ตตาล็อกสินค้า/อุปกรณ์ ที่ระบุเลขหน้าชัดเจน\n2. **ตาราง Comply (ไฟล์ Word .docx):** ตารางเปรียบเทียบคุณลักษณะเฉพาะตาม TOR ที่มีโครงสร้างหัวข้อและตารางเดิมอยู่แล้ว\n\n---\n\n## 🎯 ผลลัพธ์ที่ต้องการ (OUTPUT):\n1. **Catalog PDF ที่ขีดเส้น Comply เรียบร้อย:** มีเส้นขีดใต้ข้อความหลักฐานและหมายเลขข้อกำกับที่แก้ไขได้\n2. **Word ตาราง Compliance ที่กรอกข้อมูลสมบูรณ์:** ระบุบท/หัวข้อ, หน้า, รุ่น และรายละเอียดครบถ้วน โดยคง Format เดิมของไฟล์ 100%\n\n---\n\n## 📋 กฎเหล็กและข้อกำหนดในการปฏิบัติงาน (Strict Rules):\n\n### 1. การขีดเส้น Mark Comply ใน Catalog PDF\n- **ขีดเส้นเฉพาะข้อความที่ใช้ยืนยันข้อกำหนดได้จริงและตรงกับ TOR:** เส้นใต้ต้องขีดทับเฉพาะข้อความ ค่าตัวเลข พารามิเตอร์ หรือสเปกที่เป็นหลักฐานยืนยันข้อกำหนดข้อนั้นๆ โดยตรง\n- **ห้าม Mark จากการคาดเดา:** หากไม่มีข้อมูลหรือข้อความรองรับชัดเจนใน Catalog **ให้เว้นไว้ทันที** ห้ามเดาหรือสรุปเอาเองโดยเด็ดขาด\n- **การระบุหมายเลขข้อกำกับเส้น Mark:** กำกับเลขข้อที่ขีดเส้นให้สอดคล้องกับ TOR หากเป็นข้อย่อยให้ใช้รูปแบบตามที่กำหนด เช่น `1.1 (1)` หรือ `1.1 (1) (12)`\n\n### 2. การเติมข้อมูลลงในตาราง Word (Compliance Table)\nเติมข้อมูลลงในช่องตารางของไฟล์ Word โดยต้องระบุรายละเอียดให้ครบถ้วนในแต่ละข้อ:\n* **บท / หัวข้อ:** ระบุชื่อบทหรือหัวข้อของ Catalog ที่พบข้อมูล เช่น `บทที่ 3`, `Section 2.4`, `General Specifications`\n* **หน้า:** ระบุเลขหน้าจริงใน Catalog PDF ที่พบข้อความ เช่น `หน้า 12`, `Page 15`\n* **รุ่น / Model:** ระบุชื่อรุ่น ยี่ห้อ หรือรหัสผลิตภัณฑ์ที่นำเสนอให้ตรงตามเอกสาร\n* **รายละเอียดที่ใช้ยืนยันข้อกำหนด:** คัดลอกหรือสรุปข้อความสเปกจาก Catalog ที่ใช้ตอบสนองข้อกำหนดข้อนั้น พร้อมระบุความสอดคล้อง (เช่น \"เป็นไปตามข้อกำหนด เนื่องจากมีกำลังส่ง 50W ย่านความถี่ 30-512 MHz ตามระบุใน Catalog หน้า 12\")\n\n### 3. การคงรูปแบบไฟล์ Word อย่างเคร่งครัด (100% Layout & Format Preservation)\n* **คงรูปแบบเดิมทั้งหมด:** ตาราง, เส้นขอบ, สีพื้นหลัง, ฟอนต์, ขนาดตัวอักษร (Font Size), และ Layout เดิมของไฟล์ Word **ห้ามเปลี่ยน Format หรือโครงสร้างตารางโดยเด็ดขาด**\n* ข้อมูลที่เติมลงในช่อง ต้องใช้รูปแบบฟอนต์ ขนาด และสีที่เข้ากับตารางเดิมอย่างกลมกลืน\n\n### 4. ความสอดคล้องของข้อมูล (Cross-Verification)\n* ข้อมูล **บท, หน้า และรุ่น** ที่กรอกในไฟล์ Word **ต้องตรงกับ Catalog PDF จริง 100%**\n* หากข้อใดใน TOR เป็นข้อย่อย ให้จัดรูปแบบเลขข้ออย่างเป็นระบบ เช่น:\n  - `1.1 (1)`\n  - `1.1 (1) (12)`\n* **ตรวจสอบความถูกต้องทั้งหมด (Final Quality Check):** ตรวจทานความสอดคล้องระหว่างเส้นที่ขีดใน PDF กับข้อมูลที่กรอกใน Word ให้ตรงกันทุกจุดก่อนส่งมอบงาน",
-    "lastUpdated": "2026-09-15T01:56:19.742Z",
+    "lastUpdated": "2026-09-14T11:46:56.989Z",
     "starred": true,
     "likes": 540,
     "tags": [
@@ -54,7 +54,7 @@
     "id": "trans-monochrome-bureau-en-th",
     "title": "แปลเอกสารอังกฤษเป็นไทย ส่งสำนักแปล  สไตล์ Monochrome (คุมหน้าเดิม 100% แทนที่ภาพด้วยกล่องรูปภาพ)",
     "category": "Translation",
-    "thumbnailUrl": "/assets/thumbnails/trans-monochrome-bureau-en-th.svg",
+    "thumbnailUrl": "/assets/thumbnails/trans-monochrome-bureau-en-th.webp",
     "aspectRatio": "4:3",
     "stylePreset": "Monochrome Translation Bureau",
     "inputType": "PDF / DOCX / เอกสารภาษาอังกฤษทุกประเภท",
@@ -97,7 +97,7 @@
       "Jammer",
       "Tactical Radio"
     ],
-    "thumbnailUrl": "/assets/thumbnails/ai-img-drc-defense-backdrop-4-3.svg"
+    "thumbnailUrl": "/assets/thumbnails/ai-img-drc-defense-backdrop-4-3.jpg"
   },
   {
     "id": "1788779257202",
@@ -117,7 +117,7 @@
       "9:16",
       "Modern Vector Flat"
     ],
-    "thumbnailUrl": "/assets/thumbnails/1788779257202.svg"
+    "thumbnailUrl": "/assets/thumbnails/1788779257202.webp"
   },
   {
     "id": "1787799529309",
@@ -294,8 +294,8 @@
     "inputType": "Comply / TOR / Datasheet + Logo / DRC Pattern",
     "outputType": "Editable DOC / Word (.docx)",
     "description": "สร้าง Datasheet/Catalog ระดับมืออาชีพในไฟล์ Word (DOC) ยึดโครงสร้างตามแม่แบบ DRC (รุ่น Dxxx-xxx) ฟอนต์ Roboto เรียบเรียงภาษา Catalog อ่านง่าย ไม่ลอก TOR ตรงๆ จบสมบูรณ์ใน 1-2 หน้า",
-    "promptContent": "แนบ: เนื้อหา Catalog / TOR / ตาราง Comply + Logo บริษัท + (ไฟล์ Pattern Catalog / แม่แบบ DRC ถ้ามี).\n\nคำสั่ง:\nช่วยศึกษาข้อมูลในไฟล์ Comply / TOR / Datasheet อย่างครบถ้วน เพื่อนำมาสร้าง Datasheet อย่างมืออาชีพ\n\nข้อกำหนดและโครงสร้างเอกสาร:\n1. โครงสร้างและการจัดหน้า:\n   - ในไฟล์ Pattern ตัวอย่าง หรือ Logo บริษัท ให้ยึดโครงสร้างตามไฟล์ DRC เป๊ะๆ\n   - กำหนดรหัสรุ่นสินค้าเป็น \"Dxxx-xxx\" (หรือเว้นไว้ตั้งชื่อในภายหลัง)\n   - วางองค์ประกอบให้ครบถ้วน: Logo, ภาพสินค้า/Hero Section, รายละเอียดจุดเด่น, ตารางคุณสมบัติ\n   - ขอผลลัพธ์เป็นไฟล์ DOC/DOCX ที่แก้ไขได้ ให้จบสมบูรณ์ภายใน 1-2 หน้ากระดาษ\n\n2. สไตล์ภาษาและการเรียบเรียง:\n   - ไม่จำเป็นต้องเขียนเนื้อหาเหมือน TOR เป๊ะๆ\n   - เน้นให้อ่านเข้าใจง่ายแบบ Catalog องค์ประกอบครบ ดูเนียน ไม่เหมือนลอก TOR มาใส่ตรงๆ\n   - สรุปจุดเด่น (Key Highlights) และประโยชน์การใช้งานเชิงเทคนิคให้กระชับและดึงดูด\n\n3. ฟอนต์และการจัดวาง:\n   - ใช้ฟอนต์: Roboto (สำหรับหัวข้อและเนื้อหา)\n   - จัดลำดับความสำคัญของตัวอักษร (Typography Hierarchy) ให้สวยงาม สบายตา\n\n4. ตารางสเปกเทคนิค (Technical Specifications):\n   - สร้างตาราง Word Table ที่ฝังข้อความและตัวเลขอยู่ภายในเซลล์ตารางโดยตรง\n   - แบ่งหมวดหมู่สเปกชัดเจน เช่น General, RF & Performance, Power, Dimensions & Environment",
-    "lastUpdated": "2026-09-14T13:16:51.241Z",
+    "promptContent": "แนบ: เนื้อหา Catalog / TOR / ตาราง Comply + Logo บริษัท + (ไฟล์ Pattern Catalog / แม่แบบ DRC ถ้ามี)\n\nคำสั่ง:\nช่วยศึกษาข้อมูลในไฟล์ Comply / TOR / Datasheet อย่างครบถ้วน เพื่อนำมาสร้าง Datasheet อย่างมืออาชีพ\n\nข้อกำหนดและโครงสร้างเอกสาร:\n1. โครงสร้างและการจัดหน้า:\n   - ในไฟล์ Pattern ตัวอย่าง หรือ Logo บริษัท ให้ยึดโครงสร้างตามไฟล์ DRC เป๊ะๆ\n   - กำหนดรหัสรุ่นสินค้าเป็น \"Dxxx-xxx\" (หรือเว้นไว้ตั้งชื่อในภายหลัง)\n   - วางองค์ประกอบให้ครบถ้วน: Logo, ภาพสินค้า/Hero Section, รายละเอียดจุดเด่น, ตารางคุณสมบัติ\n   - ขอผลลัพธ์เป็นไฟล์ DOC/DOCX ที่แก้ไขได้ ให้จบสมบูรณ์ภายใน 1-2 หน้ากระดาษ\n\n2. สไตล์ภาษาและการเรียบเรียง:\n   - ไม่จำเป็นต้องเขียนเนื้อหาเหมือน TOR เป๊ะๆ\n   - เน้นให้อ่านเข้าใจง่ายแบบ Catalog องค์ประกอบครบ ดูเนียน ไม่เหมือนลอก TOR มาใส่ตรงๆ\n   - สรุปจุดเด่น (Key Highlights) และประโยชน์การใช้งานเชิงเทคนิคให้กระชับและดึงดูด\n\n3. ฟอนต์และการจัดวาง:\n   - ใช้ฟอนต์: Roboto (สำหรับหัวข้อและเนื้อหา)\n   - จัดลำดับความสำคัญของตัวอักษร (Typography Hierarchy) ให้สวยงาม สบายตา\n\n4. ตารางสเปกเทคนิค (Technical Specifications):\n   - สร้างตาราง Word Table ที่ฝังข้อความและตัวเลขอยู่ภายในเซลล์ตารางโดยตรง\n   - แบ่งหมวดหมู่สเปกชัดเจน เช่น General, RF & Performance, Power, Dimensions & Environment",
+    "lastUpdated": "2026-09-14T11:50:32.148Z",
     "starred": true,
     "likes": 395,
     "tags": [
@@ -352,7 +352,7 @@
       "#00AF54",
       "Editable Annotation"
     ],
-    "thumbnailUrl": "/assets/thumbnails/bidding-lte-comply.svg",
+    "thumbnailUrl": "/assets/thumbnails/bidding-lte-comply.webp",
     "aspectRatio": "4:3",
     "stylePreset": "Photorealistic"
   },
@@ -613,7 +613,7 @@
       "Bidding",
       "ราชการ"
     ],
-    "thumbnailUrl": "/assets/thumbnails/44.svg",
+    "thumbnailUrl": "/assets/thumbnails/44.webp",
     "aspectRatio": "4:3",
     "stylePreset": "Photorealistic"
   },
@@ -852,7 +852,7 @@
       "TOR",
       "ประมูลงาน"
     ],
-    "thumbnailUrl": "/assets/thumbnails/32.svg",
+    "thumbnailUrl": "/assets/thumbnails/32.webp",
     "aspectRatio": "4:3"
   },
   {
@@ -1162,7 +1162,7 @@
       "Template Preservation",
       "PPTX"
     ],
-    "thumbnailUrl": "/assets/thumbnails/16.jpg",
+    "thumbnailUrl": "/assets/thumbnails/16.webp",
     "aspectRatio": "16:9"
   },
   {
@@ -1450,7 +1450,7 @@
       "A4 Landscape",
       "PPTX"
     ],
-    "thumbnailUrl": "/assets/thumbnails/1.jpg",
+    "thumbnailUrl": "/assets/thumbnails/1.webp",
     "aspectRatio": "16:9"
   }
 ]

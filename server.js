@@ -102,7 +102,12 @@ function savePromptsDatabase(prompts) {
         const fileName = `${safeId}.${ext}`;
         const filePath = path.join(thumbsDir, fileName);
         try {
-          fs.writeFileSync(filePath, Buffer.from(match[2], 'base64'));
+          const buffer = Buffer.from(match[2], 'base64');
+          fs.writeFileSync(filePath, buffer);
+          const distThumbsDir = path.join(__dirname, 'dist', 'assets', 'thumbnails');
+          if (fs.existsSync(distThumbsDir)) {
+            fs.writeFileSync(path.join(distThumbsDir, fileName), buffer);
+          }
           p.thumbnailUrl = `/assets/thumbnails/${fileName}`;
           console.log(`[Server Storage] Saved thumbnail file: ${fileName}`);
         } catch (err) {
@@ -113,6 +118,20 @@ function savePromptsDatabase(prompts) {
 
     if (p.thumbnailUrl && p.thumbnailUrl.startsWith('./assets/')) {
       p.thumbnailUrl = p.thumbnailUrl.replace('./assets/', '/assets/');
+    }
+
+    // Protect local thumbnails: If prompt has remote/missing thumbnail but a local thumbnail file exists for this ID, use local file
+    if (!p.thumbnailUrl || !p.thumbnailUrl.startsWith('/assets/thumbnails/')) {
+      const webp = `${p.id}.webp`;
+      const jpg = `${p.id}.jpg`;
+      const png = `${p.id}.png`;
+      if (fs.existsSync(path.join(thumbsDir, webp))) {
+        p.thumbnailUrl = `/assets/thumbnails/${webp}`;
+      } else if (fs.existsSync(path.join(thumbsDir, jpg))) {
+        p.thumbnailUrl = `/assets/thumbnails/${jpg}`;
+      } else if (fs.existsSync(path.join(thumbsDir, png))) {
+        p.thumbnailUrl = `/assets/thumbnails/${png}`;
+      }
     }
   }
 
@@ -136,6 +155,21 @@ app.get('/api/health', (req, res) => {
 app.get('/api/prompts', (req, res) => {
   const prompts = getPromptsDatabase();
   res.json({ success: true, count: prompts.length, prompts });
+});
+
+// API: Save / Sync prompts database
+app.delete('/api/prompts/:id', (req, res) => {
+  try {
+    const { id } = req.params;
+    const prompts = getPromptsDatabase();
+    const filtered = prompts.filter(x => x.id !== id);
+    savePromptsDatabase(filtered);
+    console.log(`[Server Storage] Deleted prompt ${id}, remaining: ${filtered.length}`);
+    res.json({ success: true, count: filtered.length, deletedId: id });
+  } catch (err) {
+    console.error('[Server Storage] Error deleting prompt:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 // API: Save / Sync prompts database

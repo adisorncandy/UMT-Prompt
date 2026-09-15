@@ -17,48 +17,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Kanit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <script>
       (function() {
-        const STORAGE_KEY = "umt_prompt_studio_items_v24";
+        const STORAGE_KEY = "umt_prompt_studio_items_v25";
         const VERSION_KEY = "umt_prompt_studio_items_version";
-        const CURRENT_VER = "2026-09-14-v24";
+        const CURRENT_VER = "2026-09-14-v25";
 
         try {
           const serverPrompts = window.__SERVER_PROMPTS__;
           const raw = localStorage.getItem(STORAGE_KEY);
           
           if (Array.isArray(serverPrompts) && serverPrompts.length > 0) {
-            if (!raw) {
-              localStorage.setItem(STORAGE_KEY, JSON.stringify(serverPrompts));
-              localStorage.setItem(VERSION_KEY, CURRENT_VER);
-            } else {
-              const localItems = JSON.parse(raw);
-              if (Array.isArray(localItems)) {
-                const serverMap = new Map(serverPrompts.map(p => [p.id, p]));
-                const merged = localItems.map(item => {
-                  const sp = serverMap.get(item.id);
-                  if (sp) {
-                    const serverThumb = sp.thumbnailUrl && sp.thumbnailUrl.trim().length > 0 ? sp.thumbnailUrl : null;
-                    const localThumb = item.thumbnailUrl && item.thumbnailUrl.trim().length > 0 ? item.thumbnailUrl : null;
-                    // Prefer clean server asset thumbnail if local is missing or is bloated data:
-                    let bestThumb = localThumb;
-                    if (!localThumb || localThumb.startsWith("data:") || (serverThumb && !serverThumb.startsWith("data:"))) {
-                      bestThumb = serverThumb || localThumb;
-                    }
-                    return {
-                      ...item,
-                      thumbnailUrl: bestThumb || item.thumbnailUrl,
-                      aspectRatio: item.aspectRatio || sp.aspectRatio
-                    };
-                  }
-                  return item;
-                });
-                const localIds = new Set(localItems.map(p => p.id));
-                for (const sp of serverPrompts) {
-                  if (!localIds.has(sp.id)) merged.push(sp);
-                }
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
-                localStorage.setItem(VERSION_KEY, CURRENT_VER);
-              }
-            }
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(serverPrompts));
+            localStorage.setItem(VERSION_KEY, CURRENT_VER);
           }
 
           // Verification and repair
@@ -131,6 +100,7 @@
 
           if (key === STORAGE_KEY && typeof val === "string") {
             clearTimeout(syncTimeout);
+            // Sync immediately within 50ms to ensure database is persisted right away
             syncTimeout = setTimeout(function() {
               try {
                 fetch('/api/prompts', {
@@ -139,7 +109,7 @@
                   body: JSON.stringify({ prompts: JSON.parse(val) })
                 }).catch(function() {});
               } catch(e) {}
-            }, 800);
+            }, 50);
           }
         };
       })();
